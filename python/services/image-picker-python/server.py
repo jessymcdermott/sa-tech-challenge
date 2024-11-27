@@ -1,70 +1,29 @@
 import os
 from flask import Flask, jsonify
+import json
 import random
 
 app = Flask(__name__)
 
-filenames = [
-    "Angrybird.JPG",
-    "Arco&Tub.png",
-    "IMG_9343.jpg",
-    "a real heatmap.png",
-    "angry-lemon-ufo.JPG",
-    "austintiara4.png",
-    "baby-geese.jpg",
-    "bbq.jpg",
-    "beach.JPG",
-    "bunny-mask.jpg",
-    "busted-light.jpg",
-    "cat-glowing-eyes.JPG",
-    "cat-on-leash.JPG",
-    "cat-with-bowtie.heic",
-    "cat.jpg",
-    "clementine.png",
-    "cow-peeking.jpg",
-    "different-animals-01.png",
-    "dratini.png",
-    "everything-is-an-experiment.png",
-    "experiment.png",
-    "fine-food.jpg",
-    "flower.jpg",
-    "frenwho.png",
-    "genshin-spa.jpg",
-    "grass-and-desert-guy.png",
-    "honeycomb-dogfood-logo.png",
-    "horse-maybe.png",
-    "is-this-emeri.png",
-    "jean-and-statue.png",
-    "jessitron.png",
-    "keys-drying.jpg",
-    "leftridge.png",
-    "lime-on-soap-dispenser.jpg",
-    "loki-closeup.jpg",
-    "lynia.png",
-    "ninguang-at-work.png",
-    "paul-r-allen.png",
-    "pile-of-cars.png",
-    "please.png",
-    "roswell-nose.jpg",
-    "roswell.JPG",
-    "salt-packets-in-jar.jpg",
-    "scarred-character.png",
-    "square-leaf-with-nuts.jpg",
-    "stu.jpeg",
-    "sweating-it.png",
-    "tanuki.png",
-    "tennessee-sunset.JPG",
-    "this-is-fine-trash.jpg",
-    "three-pillars-2.png",
-    "trash-flat.jpg",
-    "walrus-painting.jpg",
-    "windigo.png",
-    "yellow-lines.JPG",
-]
+image_urls = []
 
-BUCKET_NAME = os.environ.get("BUCKET_NAME", "random-pictures")
-# Generate URLs using list comprehension
-IMAGE_URLS = [f"https://{BUCKET_NAME}.s3.amazonaws.com/{filename}" for filename in filenames]
+with app.app_context():
+    """Load images from JSON file before the first request."""
+    try:
+        if not os.path.exists("images.json"):
+            raise FileNotFoundError("images.json can not be found")
+
+        with open("images.json", 'r') as file:
+            data = json.load(file)
+            images = data.get("images", [])
+
+        bucket_name = os.environ.get("BUCKET_NAME", "random-pictures")
+        image_urls = [f"https://{bucket_name}.s3.amazonaws.com/{image}" for image in images]
+        app.logger.info("Images loaded successfully.")
+
+    except Exception as e:
+        app.logger.error(f"Failed to load images: {e}")
+        images = []
 
 
 # Route for health check
@@ -76,7 +35,7 @@ def health():
 # Route for getting a random phrase
 @app.route('/imageUrl')
 def get_image_url():
-    phrase = choose(IMAGE_URLS)
+    phrase = choose(image_urls)
     # You can implement tracing logic here if needed
     return jsonify({"imageUrl": phrase})
 

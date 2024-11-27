@@ -13,5 +13,7 @@ RUN mvn -B package -DskipTests
 FROM eclipse-temurin:21-jdk-jammy
 WORKDIR /app
 COPY --from=build /app/target/image-picker-0.0.1-SNAPSHOT.jar ./image-picker.jar
+COPY images.json .
+
 EXPOSE 10116
 CMD ["java", "-jar", "image-picker.jar"]

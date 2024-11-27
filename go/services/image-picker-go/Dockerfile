@@ -25,11 +25,8 @@ FROM alpine:latest
 # Set the Current Working Directory inside the container
 WORKDIR /root/
 
-# Copy the Pre-built binary file from the previous stage
 COPY --from=builder /app/main .
+COPY images.json .
 
-# Expose port 8080 to the outside world
 EXPOSE 10116
-
-# Command to run the executable
 CMD ["./main"]

@@ -1,6 +1,7 @@
 package main
 
 import (
+	"encoding/json"
 	"fmt"
 	"math/rand"
 	"net/http"
@@ -10,63 +11,9 @@ import (
 	"github.com/labstack/echo/v4/middleware"
 )
 
-// filename holds the collection of image files to choose from
-var filenames = []string{
-	"Angrybird.JPG",
-	"Arco&Tub.png",
-	"IMG_9343.jpg",
-	"a real heatmap.png",
-	"angry-lemon-ufo.JPG",
-	"austintiara4.png",
-	"baby-geese.jpg",
-	"bbq.jpg",
-	"beach.JPG",
-	"bunny-mask.jpg",
-	"busted-light.jpg",
-	"cat-glowing-eyes.JPG",
-	"cat-on-leash.JPG",
-	"cat-with-bowtie.heic",
-	"cat.jpg",
-	"clementine.png",
-	"cow-peeking.jpg",
-	"different-animals-01.png",
-	"dratini.png",
-	"everything-is-an-experiment.png",
-	"experiment.png",
-	"fine-food.jpg",
-	"flower.jpg",
-	"frenwho.png",
-	"genshin-spa.jpg",
-	"grass-and-desert-guy.png",
-	"honeycomb-dogfood-logo.png",
-	"horse-maybe.png",
-	"is-this-emeri.png",
-	"jean-and-statue.png",
-	"jessitron.png",
-	"keys-drying.jpg",
-	"leftridge.png",
-	"lime-on-soap-dispenser.jpg",
-	"loki-closeup.jpg",
-	"lynia.png",
-	"ninguang-at-work.png",
-	"paul-r-allen.png",
-	"pile-of-cars.png",
-	"please.png",
-	"roswell-nose.jpg",
-	"roswell.JPG",
-	"salt-packets-in-jar.jpg",
-	"scarred-character.png",
-	"square-leaf-with-nuts.jpg",
-	"stu.jpeg",
-	"sweating-it.png",
-	"tanuki.png",
-	"tennessee-sunset.JPG",
-	"this-is-fine-trash.jpg",
-	"three-pillars-2.png",
-	"trash-flat.jpg",
-	"walrus-painting.jpg",
-	"windigo.png",
-	"yellow-lines.JPG",
+// ImageData is a struct to map to list of Images available
+type ImageData struct {
+	Images []string `json:"images"`
 }
 
 // ImageUrl is a struct to map the JSON output
@@ -79,14 +26,31 @@ var imageUrls []string
 
 // init is special function that gets called before main
 func init() {
+	// Open the JSON file
+	file, err := os.Open("images.json")
+	if err != nil {
+		fmt.Println("Error opening file:", err)
+		return
+	}
+	defer file.Close()
+
+	// Decode the JSON data
+	var data ImageData
+	decoder := json.NewDecoder(file)
+	err = decoder.Decode(&data)
+	if err != nil {
+		fmt.Println("Error decoding JSON:", err)
+		return
+	}
+
 	// Get the bucket name from the environment variable, with a default value
 	bucketName = os.Getenv("BUCKET_NAME")
 	if bucketName == "" {
 		bucketName = "random-pictures"
 	}
 
-	for _, filename := range filenames {
-		url := fmt.Sprintf("https://%s.s3.amazonaws.com/%s", bucketName, filename)
+	for _, image := range data.Images {
+		url := fmt.Sprintf("https://%s.s3.amazonaws.com/%s", bucketName, image)
 		imageUrls = append(imageUrls, url)
 	}
 }
