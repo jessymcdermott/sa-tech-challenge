@@ -16,7 +16,7 @@ def download_image(url):
         print(f"Image downloaded successfully and saved as {filename}")
         return filename
     else:
-        return os.path.abspath('tmp/BusinessWitch.png')
+        return None
 
 def generate_random_filename(input_filename):
     # Extract the extension from the input filename

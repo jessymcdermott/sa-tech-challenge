@@ -37,7 +37,7 @@ export async function download(inputImageUrl: string): Promise<string> {
             }
         })
         .catch((err: Error) => {
-            return path.join(__dirname, DEFAULT_IMAGE_PATH);
+            throw new Error(`Error while fetching image: ${err.message}`);
         });
 
     return downloadDestinationPath;

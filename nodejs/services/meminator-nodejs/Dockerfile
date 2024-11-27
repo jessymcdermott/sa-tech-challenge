@@ -22,7 +22,6 @@ RUN npm install
 
 COPY tsconfig.json .
 # Copy the rest of the application code to the working directory
-COPY ./tmp ./tmp
 COPY ./src ./src
 
 RUN npx tsc 
