@@ -6,6 +6,12 @@ services:
     image: backend-for-frontend-python:latest
     ports:
       - "10115"
+    environment:
+      - OTEL_SERVICE_NAME=backend-for-frontend
+      - OTEL_EXPORTER_OTLP_PROTOCOL=http/protobuf
+      - OTEL_EXPORTER_OTLP_ENDPOINT=https://api.honeycomb.io:443
+      - OTEL_EXPORTER_OTLP_HEADERS=x-honeycomb-team=hcaik_01jekqdnx4hfk4xchx92771p1z0pbk79t301dnwkxxd9ye2qdbj04asxwe
+      #^^bad practice to hardcode, do as i say not as i do?
 
   image-picker:
     build:
@@ -24,6 +30,12 @@ services:
     image: meminator-python:latest
     ports:
       - "10117"
+    environment:
+      - OTEL_SERVICE_NAME=meminator
+      - OTEL_EXPORTER_OTLP_PROTOCOL=http/protobuf
+      - OTEL_EXPORTER_OTLP_ENDPOINT=https://api.honeycomb.io:443
+      - OTEL_EXPORTER_OTLP_HEADERS=x-honeycomb-team=hcaik_01jekqdnx4hfk4xchx92771p1z0pbk79t301dnwkxxd9ye2qdbj04asxwe
+      #^^nothing to see here
 
   phrase-picker:
     build:
@@ -38,7 +50,7 @@ services:
       context: ${SERVICE_PATH:-services}/web
       dockerfile: Dockerfile
     image: web:latest
-    # volumes: # uncomment this for faster development on the frontend
+    #volumes: #lets go fast
     #   - ./services/web/dist:/usr/share/nginx/html # Mount directory containing static files -- only do this for development
     ports:
       - "10114:10114"
