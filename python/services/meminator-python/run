@@ -1,10 +1,10 @@
 # this doesn't work for me locally, (tracing doesn't work, nothing prints) and i do not know why
 
-source ../../.env # put your Honeycomb API key in this file
+#source ../../.env # put your Honeycomb API key in this file
+#SHHH ill come back and implement it, but its called Good_Egg_key
 
-export OTEL_EXPORTER_OTLP_ENDPOINT="https://api.honeycomb.io" # US instance
-#export OTEL_EXPORTER_OTLP_ENDPOINT="https://api.eu1.honeycomb.io" # EU instance
-export OTEL_EXPORTER_OTLP_HEADERS="x-honeycomb-team=${HONEYCOMB_API_KEY}"
+export OTEL_EXPORTER_OTLP_ENDPOINT="https://api.honeycomb.io:443" # US instance
+export OTEL_EXPORTER_OTLP_HEADERS="x-honeycomb-team=hcaik_01jekqdnx4hfk4xchx92771p1z0pbk79t301dnwkxxd9ye2qdbj04asxwe"
 export OTEL_SERVICE_NAME="meminator-python"
 export OTEL_LOG_LEVEL=DEBUG
 
